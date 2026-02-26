@@ -1,0 +1,20 @@
+{
+  "name": "ct-msm-live-dashboard",
+  "version": "1.0.0",
+  "description": "Contrarian Thinking MSM Live Academy Enrollment Dashboard - Real-time tracking for historic 313 enrollment record",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["dashboard", "analytics", "msm-live", "academy", "enrollment"],
+  "author": "Contrarian Thinking",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
