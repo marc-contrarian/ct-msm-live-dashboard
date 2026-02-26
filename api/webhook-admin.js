@@ -11,19 +11,10 @@ export default function handler(req, res) {
 
   try {
     if (method === 'GET') {
-      // Get webhook logs and current status
-      const logPath = path.join(process.cwd(), 'webhook-log.json');
-      const countPath = path.join(process.cwd(), 'current_academy_count.txt');
-      
-      let logs = [];
-      try {
-        logs = JSON.parse(fs.readFileSync(logPath, 'utf8'));
-      } catch (error) {
-        logs = [{ message: 'No webhook events logged yet' }];
-      }
-      
+      // Get current status (simplified for Vercel limitations)
       let currentCount = 318;
       try {
+        const countPath = path.join(process.cwd(), 'current_academy_count.txt');
         currentCount = parseInt(fs.readFileSync(countPath, 'utf8'));
       } catch (error) {
         // Use fallback
@@ -32,10 +23,14 @@ export default function handler(req, res) {
       return res.json({
         status: 'webhook system active',
         currentEnrollments: currentCount,
-        recentEvents: logs.slice(-10), // Last 10 events
-        totalEvents: logs.length,
+        note: 'Webhook events are logged to console only (Vercel filesystem is read-only)',
         webhookEndpoint: '/api/webhook',
-        lastChecked: new Date().toISOString()
+        lastChecked: new Date().toISOString(),
+        limitations: [
+          'File writes not supported on Vercel serverless',
+          'Events logged to console only',
+          'For persistence, integrate with database'
+        ]
       });
       
     } else if (method === 'POST') {
