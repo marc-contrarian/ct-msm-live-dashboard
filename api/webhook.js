@@ -1,8 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import { createClient } from '@supabase/supabase-js';
 
-// Webhook handler for SamCart events
+// Database-powered webhook handler for real-time updates
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -11,121 +9,176 @@ export default async function handler(req, res) {
   try {
     const { event_type, data } = req.body;
     
+    // Initialize Supabase client
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_KEY
+    );
+
     // Log the webhook event
-    console.log(`[Webhook] Received: ${event_type}`, {
+    console.log(`[Webhook DB] Received: ${event_type}`, {
       timestamp: new Date().toISOString(),
       event_type,
-      data: data ? Object.keys(data) : 'no data'
+      order_id: data?.order_id
+    });
+
+    // Store webhook event in database
+    await supabase.from('webhook_events').insert({
+      event_type,
+      order_id: data?.order_id,
+      product_name: data?.product?.name,
+      customer_email: data?.customer?.email,
+      metadata: data
     });
 
     // Handle different event types
     switch (event_type) {
       case 'order.completed':
-        await handleNewOrder(data);
+        if (isMSMProduct(data)) {
+          await handleNewOrder(supabase, data);
+        }
         break;
       case 'order.refunded':
-        await handleRefund(data);
+        if (isMSMProduct(data)) {
+          await handleRefund(supabase, data);
+        }
         break;
       case 'subscription.charged':
-        await handleRenewal(data);
+        await handleRenewal(supabase, data);
         break;
       case 'charge.failed':
-        await handleFailedPayment(data);
+        await handleFailedPayment(supabase, data);
         break;
       default:
-        console.log(`[Webhook] Unhandled event type: ${event_type}`);
+        console.log(`[Webhook DB] Unhandled event type: ${event_type}`);
     }
 
-    res.status(200).json({ status: 'success', event_type });
-  } catch (error) {
-    console.error('[Webhook] Error processing:', error);
-    res.status(500).json({ error: 'Webhook processing failed' });
-  }
-}
-
-export async function handleNewOrder(data) {
-  console.log('[Webhook] Processing new order:', data?.order_id);
-  
-  // Check if this is an MSM Live purchase
-  if (isMSMProduct(data)) {
-    await updateMSMEnrollments('increment', {
-      order_id: data.order_id,
-      customer_email: data.customer?.email,
+    res.status(200).json({ 
+      status: 'success', 
+      event_type,
       timestamp: new Date().toISOString()
     });
+
+  } catch (error) {
+    console.error('[Webhook DB] Error processing:', error);
+    res.status(500).json({ error: 'Webhook processing failed', details: error.message });
   }
-}
-
-export async function handleRefund(data) {
-  console.log('[Webhook] Processing refund:', data?.order_id);
-  
-  // Check if this is an MSM Live refund
-  if (isMSMProduct(data)) {
-    await updateMSMEnrollments('decrement', {
-      order_id: data.order_id,
-      customer_email: data.customer?.email,
-      timestamp: new Date().toISOString(),
-      reason: 'refund'
-    });
-  }
-}
-
-async function handleRenewal(data) {
-  console.log('[Webhook] Processing renewal:', data?.subscription_id);
-  // Handle subscription renewals (future enhancement)
-}
-
-async function handleFailedPayment(data) {
-  console.log('[Webhook] Processing failed payment:', data?.charge_id);
-  // Handle failed payments (future enhancement)
 }
 
 function isMSMProduct(data) {
-  // Check if the product is MSM Live related
   const productName = data.product?.name?.toLowerCase() || '';
   const msmKeywords = ['msm', 'master', 'sales', 'machine', 'live'];
-  
   return msmKeywords.some(keyword => productName.includes(keyword));
 }
 
-async function updateMSMEnrollments(action, metadata) {
+async function handleNewOrder(supabase, data) {
+  console.log('[Webhook DB] Processing new MSM order:', data?.order_id);
+  
   try {
-    console.log(`[Webhook] Would ${action} enrollment for order: ${metadata.order_id}`);
-    
-    // NOTE: Vercel serverless functions have read-only filesystem
-    // For production, this needs to connect to a database or external storage
-    // For now, we'll just log the events
-    
-    const currentCount = 318; // Read from current state
-    const newCount = action === 'increment' ? currentCount + 1 : currentCount - 1;
-    
-    console.log(`[Webhook] Enrollment change: ${currentCount} → ${newCount}`);
-    
-    // Log the change (for monitoring)
-    await logWebhookEvent({
-      action,
-      old_count: currentCount,
-      new_count: newCount,
-      metadata,
-      timestamp: new Date().toISOString(),
-      note: 'Logged only - filesystem read-only on Vercel'
+    // Get current enrollment count
+    const { data: currentState } = await supabase
+      .from('dashboard_state')
+      .select('metric_value')
+      .eq('metric_name', 'msm_enrollments')
+      .single();
+
+    const newCount = (currentState?.metric_value || 318) + 1;
+
+    // Update enrollment count
+    await supabase
+      .from('dashboard_state')
+      .upsert({
+        metric_name: 'msm_enrollments',
+        metric_value: newCount,
+        updated_by: `webhook_${data?.order_id}`
+      });
+
+    // Add timeline entry
+    await supabase.from('enrollment_timeline').insert({
+      date: new Date().toISOString().split('T')[0],
+      enrollments: newCount,
+      time_label: `${new Date().toLocaleTimeString('en-US', { 
+        timeZone: 'America/Chicago',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      })} CT`,
+      event_source: 'webhook',
+      order_id: data?.order_id
     });
-    
+
+    console.log(`[Webhook DB] Incremented enrollments: ${currentState?.metric_value} → ${newCount}`);
+
   } catch (error) {
-    console.error('[Webhook] Error processing enrollment update:', error);
+    console.error('[Webhook DB] Error handling new order:', error);
     throw error;
   }
 }
 
-async function logWebhookEvent(event) {
+async function handleRefund(supabase, data) {
+  console.log('[Webhook DB] Processing MSM refund:', data?.order_id);
+  
   try {
-    // For now, just console.log the event
-    // In production, this would send to a logging service or database
-    console.log('[Webhook] Event:', JSON.stringify(event, null, 2));
-    
-    // TODO: Send to external logging service (e.g., Supabase, Firebase, etc.)
-    
+    // Get current enrollment count
+    const { data: currentState } = await supabase
+      .from('dashboard_state')
+      .select('metric_value')
+      .eq('metric_name', 'msm_enrollments')
+      .single();
+
+    const newCount = Math.max(0, (currentState?.metric_value || 318) - 1);
+
+    // Update enrollment count
+    await supabase
+      .from('dashboard_state')
+      .upsert({
+        metric_name: 'msm_enrollments',
+        metric_value: newCount,
+        updated_by: `refund_${data?.order_id}`
+      });
+
+    // Add timeline entry
+    await supabase.from('enrollment_timeline').insert({
+      date: new Date().toISOString().split('T')[0],
+      enrollments: newCount,
+      time_label: `${new Date().toLocaleTimeString('en-US', { 
+        timeZone: 'America/Chicago',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      })} CT (Refund)`,
+      event_source: 'webhook',
+      order_id: data?.order_id
+    });
+
+    console.log(`[Webhook DB] Decremented enrollments: ${currentState?.metric_value} → ${newCount}`);
+
   } catch (error) {
-    console.error('[Webhook] Error logging event:', error);
+    console.error('[Webhook DB] Error handling refund:', error);
+    throw error;
   }
+}
+
+async function handleRenewal(supabase, data) {
+  console.log('[Webhook DB] Processing renewal:', data?.subscription_id);
+  
+  // Store renewal event for future analytics
+  await supabase.from('webhook_events').insert({
+    event_type: 'subscription.charged',
+    order_id: data?.subscription_id,
+    metadata: data,
+    action: 'renewal'
+  });
+}
+
+async function handleFailedPayment(supabase, data) {
+  console.log('[Webhook DB] Processing failed payment:', data?.charge_id);
+  
+  // Store failed payment for dunning workflows
+  await supabase.from('webhook_events').insert({
+    event_type: 'charge.failed',
+    order_id: data?.charge_id,
+    metadata: data,
+    action: 'payment_failed'
+  });
 }
