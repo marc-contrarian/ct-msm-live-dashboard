@@ -1,6 +1,6 @@
 export default function handler(req, res) {
   // Current Academy count - Updated 2026-02-26
-  const currentEnrollments = 319; // As of 2:23 PM CT on 2/26/26
+  const currentEnrollments = 318; // As of 2026-02-26 (refund processed)
   const currentRevenue = currentEnrollments * 10000; // $10K per enrollment
   
   const liveData = {
