@@ -415,7 +415,7 @@
                     
                     <!-- Full Width Cumulative Chart -->
                     <div class="chart-box full-width-chart">
-                        <h3>📈 Cumulative Academy Enrollments (COMPLETE) - Event + 14-Day Attribution</h3>
+                        <h3>📈 Cumulative Academy Enrollments - Event + 14-Day Attribution</h3>
                         <div class="chart-container large-chart">
                             <canvas id="feb2026-cumulative-chart"></canvas>
                         </div>
@@ -1279,7 +1279,7 @@
                             pointBorderWidth: 2,
                             pointRadius: 3,
                             pointHoverRadius: 6,
-                            spanGaps: false
+                            spanGaps: true
                         }]
                     },
                     options: {
@@ -1658,7 +1658,7 @@
             }
         }
 
-        // Comparative Chart: September 2025 vs February 2026 - COMPLETE DAY 2 + DAY 3
+        // Comparative Chart: September 2025 vs February 2026 - Event + 14-Day Attribution
         function createComparativeChart() {
             // Complete timeline: Day 2 (Academy pitch day) + Day 3 (surge day)
             
@@ -1775,7 +1775,7 @@
                         pointBackgroundColor: '#4ECDC4',
                         borderWidth: 3,
                         pointHoverRadius: 7,
-                        spanGaps: false // Don't connect gaps - stops at actual data
+                        spanGaps: true // Connect gaps to ensure continuous line
                     }]
                 },
                 options: {
