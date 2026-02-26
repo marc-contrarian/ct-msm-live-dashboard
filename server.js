@@ -38,9 +38,9 @@ app.get('/api/live-data', (req, res) => {
         
         // Calculate revenue based on actual count
         if (count === 313) {
-          currentRevenue = 3193000; // $3.193M for obliteration continues
+          currentRevenue = 3193000; // $3.193M for 313 enrollments (83.5% of goal)
         } else if (count === 312) {
-          currentRevenue = 3188000; // $3.188M for record obliterated
+          currentRevenue = 3188000; // $3.188M for 312 enrollments
         } else if (count === 310) {
           currentRevenue = 3178000; // $3.178M for unstoppable momentum
         } else if (count === 309) {
@@ -93,13 +93,13 @@ app.get('/health', (req, res) => {
     status: 'healthy', 
     timestamp: new Date().toISOString(),
     enrollments: 313,
-    message: 'MSM Live Dashboard - Record Obliteration Continues!' 
+    message: 'MSM Live Dashboard - 313 Enrollments (83.5% of 375 Goal)' 
   });
 });
 
 app.listen(PORT, () => {
   console.log(`🚀 MSM Live Dashboard server running on port ${PORT}`);
-  console.log(`📊 Historic 313 Academy enrollments - Record obliteration continues!`);
+  console.log(`📊 313 Academy enrollments - 83.5% of 375 goal achieved!`);
 });
 
 module.exports = app;

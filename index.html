@@ -426,7 +426,7 @@
                         <h3>⚔️ Academy Performance: September 2025 vs February 2026 (3 PM Day 2 → Post-Event Attribution)</h3>
                         <p style="text-align: center; font-size: 0.85rem; color: #666; margin-top: -5px; margin-bottom: 15px;">
                             <strong>Red Line:</strong> September 2025 complete performance (305 final) - <em>TARGET TO CHASE</em> | 
-                            <strong>Teal Line:</strong> February 2026 actual data only (current: 313 enrollments) - <em>💥 OBLITERATION CONTINUES!</em>
+                            <strong>Teal Line:</strong> February 2026 actual data only (current: 313 enrollments) - <em>83.5% of 375 goal</em>
                         </p>
                         <div class="chart-container large-chart">
                             <canvas id="comparative-enrollments-chart"></canvas>
@@ -612,7 +612,7 @@
         
         // Academy enrollment data (updated from manual count)
         const academyData = {
-            totalEnrollments: 313, // 313 ENROLLMENTS - OBLITERATION CONTINUES! 7 ABOVE PREVIOUS RECORD! (83.5% of 375 goal, 89.4% of 350 minimum)
+            totalEnrollments: 313, // 313 ENROLLMENTS - 83.5% of 375 goal achieved (89.4% of 350 minimum)
             planA: 235, // Updated proportion based on 75% Plan A ratio (313 × 0.75)
             planB: 78, // Updated proportion based on 25% Plan B ratio (313 × 0.25)
             depositPerEnrollment: 2000,
@@ -1175,8 +1175,8 @@
                     {time: '2/25 11:33 AM', count: 308},   // 🔥 RECORD EXTENDS FURTHER! 2 above previous record!
                     {time: '2/25 12:13 PM', count: 309},   // 🚀 HISTORIC STREAK CONTINUES! 3 above previous record!
                     {time: '2/25 3:14 PM', count: 310},    // 🚀 UNSTOPPABLE MOMENTUM! 4 above previous record!
-                    {time: '2/25 4:45 PM', count: 312},    // 💥 RECORD OBLITERATED! 6 above previous record!
-                    {time: '2/25 6:47 PM', count: 313},    // 💥 OBLITERATION CONTINUES! 7 above previous record!
+                    {time: '2/25 4:45 PM', count: 312},    // 🎯 Strong progress - 312 enrollments (83.2% of 375 goal)
+                    {time: '2/25 6:47 PM', count: 313},    // 🎯 Continued growth - 313 enrollments (83.5% of 375 goal)
                 ];
                 
                 // Generate future hourly projections through 6 PM today
@@ -1304,13 +1304,14 @@
                                         // Add milestone markers
                                         if (total === 283) milestone = ' 🎉 EVENT CONCLUSION';
                                         if (total === 299) milestone = ' 🔥 MIDNIGHT DEADLINE SURGE';
-                                        if (total === 306) milestone = ' 🏆 RECORD MATCHED!';
-                                        if (total === 307) milestone = ' 🚀 NEW ALL-TIME RECORD!';
-                                        if (total === 308) milestone = ' 🔥 RECORD EXTENDS FURTHER!';
-                                        if (total === 309) milestone = ' 🚀 HISTORIC STREAK CONTINUES!';
-                                        if (total === 310) milestone = ' 🚀 UNSTOPPABLE MOMENTUM!';
-                                        if (total === 312) milestone = ' 💥 RECORD OBLITERATED!';
-                                        if (total === 313) milestone = ' 💥 OBLITERATION CONTINUES!';
+                                        if (total === 306) milestone = ' 🏆 SEPTEMBER 2025 MATCHED';
+                                        if (total === 307) milestone = ' 🎯 ABOVE PREVIOUS BEST';
+                                        if (total === 308) milestone = ' 📈 STRONG GROWTH';
+                                        if (total === 309) milestone = ' 📈 CONTINUED PROGRESS';
+                                        if (total === 310) milestone = ' 🎯 82.7% OF 375 GOAL';
+                                        if (total === 312) milestone = ' 🎯 83.2% OF 375 GOAL';
+                                        if (total === 313) milestone = ' 🎯 83.5% OF 375 GOAL';
+                                        if (total === 375) milestone = ' 🏆 GOAL ACHIEVED!';
                                         
                                         return [`Total Revenue: $${revenue.toLocaleString()}`, milestone];
                                     }
@@ -1643,7 +1644,7 @@
         function updateRevenueChart() {
             if (window.revenueChart) {
                 const currentRevenue = (academyData.planA * 10000) + (academyData.planB * 11000);
-                window.revenueChart.data.datasets[0].data = [636651, 3193000]; // 313 ENROLLMENTS! $3.193M Academy booked revenue (OBLITERATION CONTINUES!)
+                window.revenueChart.data.datasets[0].data = [636651, 3193000]; // 313 ENROLLMENTS! $3.193M Academy booked revenue (83.5% of 375 goal)
                 window.revenueChart.update();
                 console.log(`💰 Updated revenue chart: Academy booked revenue = $${currentRevenue.toLocaleString()}`);
             }
@@ -1732,7 +1733,7 @@
                 285,  // 7:46 AM - 2nd post-event sale  
                 286,  // 11:23 AM - 3rd post-event sale
                 287,  // 12:02 PM - 4th post-event sale
-                313   // 💥 OBLITERATION CONTINUES! - 30th post-event sale - ESTABLISHING NEW PARADIGM
+                313   // 🎯 83.5% OF GOAL - 30th post-event sale - Strong progress toward 375
             ];
             
             // Readable timeline labels (starting 3 PM Day 2 - when Academy action begins)
