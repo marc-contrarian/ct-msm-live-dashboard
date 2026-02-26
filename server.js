@@ -26,8 +26,8 @@ const mimeTypes = {
 // API Routes
 app.get('/api/live-data', (req, res) => {
   // Get current Academy count from file or default to baseline
-  let currentEnrollments = 313; // Current record count
-  let currentRevenue = 3193000; // $3.193M
+  let currentEnrollments = 315; // Current record count
+  let currentRevenue = 3225000; // $3.193M
   
   try {
     if (fs.existsSync('current_academy_count.txt')) {
@@ -37,7 +37,11 @@ app.get('/api/live-data', (req, res) => {
         currentEnrollments = count;
         
         // Calculate revenue based on actual count
-        if (count === 313) {
+        if (count === 315) {
+          currentRevenue = 3225000; // $3.225M for 315 enrollments (84.0% of goal)
+        } else if (count === 314) {
+          currentRevenue = 3209000; // $3.209M for 314 enrollments
+        } else if (count === 313) {
           currentRevenue = 3193000; // $3.193M for 313 enrollments (83.5% of goal)
         } else if (count === 312) {
           currentRevenue = 3188000; // $3.188M for 312 enrollments
