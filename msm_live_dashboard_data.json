@@ -2,15 +2,19 @@
   "events": {
     "september2025": {
       "totalTickets": 5893,
-      "totalEnrollments": 306,
-      "totalRevenue": 3060000,
-      "conversionRate": 5.2,
+      "totalEnrollments": 363,
+      "totalRevenue": 3630000,
+      "conversionRate": 6.2,
       "timeline": [
         {"date": "2025-09-19", "enrollments": 0},
         {"date": "2025-09-20", "enrollments": 88},
         {"date": "2025-09-21", "enrollments": 217},
         {"date": "2025-09-22", "enrollments": 305},
-        {"date": "2025-09-23", "enrollments": 306}
+        {"date": "2025-09-23", "enrollments": 310},
+        {"date": "2025-09-24", "enrollments": 325},
+        {"date": "2025-09-25", "enrollments": 340},
+        {"date": "2025-09-26", "enrollments": 353},
+        {"date": "2025-09-27", "enrollments": 363}
       ]
     },
     "february2025": {
@@ -24,8 +28,8 @@
       "totalEnrollments": 318,
       "totalRevenue": 3180000,
       "conversionRate": 5.6,
-      "status": "record_obliterated",
-      "recordDifference": 12,
+      "status": "tracking_to_goal",
+      "recordDifference": -45,
       "timeline": [
         {"date": "2026-02-20", "enrollments": 0},
         {"date": "2026-02-21", "enrollments": 123},
