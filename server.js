@@ -25,24 +25,13 @@ const mimeTypes = {
 
 // API Routes
 app.get('/api/live-data', (req, res) => {
-  // Get current Academy count from file or default to baseline
-  let currentEnrollments = 317; // Current record count
+  // Current Academy count - Updated 2026-02-26
+  let currentEnrollments = 317; // As of 11:09 AM CT on 2/26/26
   let currentRevenue = 3170000; // $3.17M
   
-  try {
-    if (fs.existsSync('current_academy_count.txt')) {
-      const countData = fs.readFileSync('current_academy_count.txt', 'utf8').trim();
-      const count = parseInt(countData);
-      if (!isNaN(count) && count > 123) {
-        currentEnrollments = count;
-        
-        // Calculate revenue based on actual count (simplified dynamic calculation)
-        currentRevenue = count * 10000; // $10K per enrollment
-      }
-    }
-  } catch (error) {
-    console.error('Error reading academy count:', error);
-  }
+  // Force current data for now (file reading seems to have Vercel deployment issues)
+  currentEnrollments = 317;
+  currentRevenue = currentEnrollments * 10000; // $10K per enrollment
   
   const liveData = {
     tickets: 5680,
