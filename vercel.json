@@ -11,6 +11,14 @@
     {
       "source": "/api/historical-data",
       "destination": "/api/historical-data"
+    },
+    {
+      "source": "/api/webhook",
+      "destination": "/api/webhook"
+    },
+    {
+      "source": "/api/webhook-admin",
+      "destination": "/api/webhook-admin"
     }
   ]
 }
