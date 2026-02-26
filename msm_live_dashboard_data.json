@@ -25,21 +25,24 @@
     },
     "february2026": {
       "totalTickets": 5680,
-      "totalEnrollments": 318,
-      "totalRevenue": 3180000,
+      "totalEnrollments": 317,
+      "totalRevenue": 3170000,
       "conversionRate": 5.6,
       "status": "tracking_to_goal",
-      "recordDifference": -45,
+      "recordDifference": -46,
       "timeline": [
         {"date": "2026-02-20", "enrollments": 0},
         {"date": "2026-02-21", "enrollments": 123},
         {"date": "2026-02-22", "enrollments": 283},
         {"date": "2026-02-23", "enrollments": 289},
         {"date": "2026-02-24", "enrollments": 299},
-        {"date": "2026-02-25", "enrollments": 313},
-        {"date": "2026-02-26", "enrollments": 318}
+        {"date": "2026-02-25", "enrollments": 313, "time": "end of day"},
+        {"date": "2026-02-25", "enrollments": 314, "time": "8:41 PM CT"},
+        {"date": "2026-02-25", "enrollments": 315, "time": "8:55 PM CT"},
+        {"date": "2026-02-25", "enrollments": 316, "time": "8:55 PM CT"},
+        {"date": "2026-02-26", "enrollments": 317, "time": "11:09 AM CT"}
       ]
     }
   },
-  "lastUpdated": "2026-02-26T17:13:00.000Z"
+  "lastUpdated": "2026-02-26T18:51:00.000Z"
 }
