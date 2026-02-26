@@ -56,23 +56,37 @@ Products not matching these keywords are ignored.
 
 ## Testing the Integration
 
-### Check Status
+### Test Purchase Event
 ```bash
-curl "https://ct-msm-live-dashboard.vercel.app/api/webhook-admin?token=msm-admin-2026"
+curl -X POST "https://ct-msm-live-dashboard.vercel.app/api/webhook" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_type": "order.completed",
+    "data": {
+      "order_id": "test-purchase-123",
+      "product": { "name": "MSM Live Master Class" },
+      "customer": { "email": "test@example.com" }
+    }
+  }'
 ```
 
-### Simulate Purchase
+### Test Refund Event
 ```bash
-curl -X POST "https://ct-msm-live-dashboard.vercel.app/api/webhook-admin?token=msm-admin-2026" \
+curl -X POST "https://ct-msm-live-dashboard.vercel.app/api/webhook" \
   -H "Content-Type: application/json" \
-  -d '{"action": "simulate_purchase"}'
+  -d '{
+    "event_type": "order.refunded", 
+    "data": {
+      "order_id": "test-refund-456",
+      "product": { "name": "MSM Live Training" },
+      "customer": { "email": "refund@example.com" }
+    }
+  }'
 ```
 
-### Simulate Refund
-```bash
-curl -X POST "https://ct-msm-live-dashboard.vercel.app/api/webhook-admin?token=msm-admin-2026" \
-  -H "Content-Type: application/json" \
-  -d '{"action": "simulate_refund"}'
+### Expected Response
+```json
+{"status":"success","event_type":"order.completed"}
 ```
 
 ## File Structure
@@ -99,17 +113,39 @@ curl -X POST "https://ct-msm-live-dashboard.vercel.app/api/webhook-admin?token=m
 - Includes timestamps, order IDs, actions taken
 - Accessible via admin endpoint
 
+## Current Status & Limitations
+
+### ✅ Working Features
+- Webhook endpoint receives and processes SamCart events
+- Event type detection (order.completed, order.refunded, etc.)
+- MSM product identification via keywords
+- Console logging of all events
+- JSON response confirmation
+
+### ⚠️ Current Limitations  
+- **No automatic dashboard updates** (Vercel filesystem is read-only)
+- Events are logged to console only
+- No persistent event storage
+- Manual dashboard updates still required
+
+### 🔧 For Full Automation (Next Phase)
+To get real-time dashboard updates, we need to:
+1. **Add database persistence** (Supabase, PlanetScale, etc.)
+2. **Store events in database** instead of console logging
+3. **Update live-data API** to read from database
+4. **Add webhook signature verification** for security
+
 ## Security Notes
 
 ### Webhook Security
 - Currently accepts all SamCart webhook events
 - **TODO:** Add webhook signature verification for production
-- Admin endpoint requires token authentication
+- No authentication currently required
 
-### Access Control
-- Admin token: `msm-admin-2026`
-- Change token for production use
-- Consider IP whitelisting for webhook endpoint
+### Access Control  
+- Public webhook endpoint (as required by SamCart)
+- Consider IP whitelisting for production
+- Add signature validation before processing events
 
 ## Troubleshooting
 
