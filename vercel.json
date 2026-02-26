@@ -1,8 +1,16 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/api"
+      "source": "/",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/api/live-data",
+      "destination": "/api/live-data"
+    },
+    {
+      "source": "/api/historical-data",
+      "destination": "/api/historical-data"
     }
   ]
 }
