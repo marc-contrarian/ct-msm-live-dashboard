@@ -39,4 +39,4 @@ Automatically deployed to Vercel on push to main branch.
 - **Attribution Window**: 14 days post-event
 
 ---
-Built with ❤️ by Toby for Contrarian Thinking Finance Operations
+Built with ❤️ by Toby for Contrarian Thinking Finance Operations# Force rebuild Thu Feb 26 13:03:36 CST 2026
