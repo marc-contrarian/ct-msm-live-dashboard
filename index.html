@@ -366,7 +366,7 @@
                     <h3>📚 Academy Enrollment Tracking</h3>
                     <div class="metrics-grid">
                         <div class="metric-card">
-                            <div class="metric-value" id="academy-enrollments">318</div>
+                            <div class="metric-value" id="academy-enrollments">321</div>
                             <div class="metric-label">Total Enrollments</div>
                         </div>
                         <div class="metric-card">
@@ -426,7 +426,7 @@
                         <h3>⚔️ Academy Performance: September 2025 vs February 2026 (3 PM Day 2 → Post-Event Attribution)</h3>
                         <p style="text-align: center; font-size: 0.85rem; color: #666; margin-top: -5px; margin-bottom: 15px;">
                             <strong>Red Line:</strong> September 2025 complete performance (305 final) - <em>TARGET TO CHASE</em> | 
-                            <strong>Teal Line:</strong> February 2026 actual data only (current: 318 enrollments) - <em>84.8% of 375 goal</em>
+                            <strong>Teal Line:</strong> February 2026 actual data only (current: 321 enrollments) - <em>85.6% of 375 goal</em>
                         </p>
                         <div class="chart-container large-chart">
                             <canvas id="comparative-enrollments-chart"></canvas>
@@ -612,9 +612,9 @@
         
         // Academy enrollment data (updated from manual count)
         const academyData = {
-            totalEnrollments: 318, // 318 ENROLLMENTS - 84.8% of 375 goal achieved (90.9% of 350 minimum)
-            planA: 238, // Updated proportion based on 75% Plan A ratio (318 × 0.75)
-            planB: 80, // Updated proportion based on 25% Plan B ratio (318 × 0.25)
+            totalEnrollments: 321, // 321 ENROLLMENTS - 85.6% of 375 goal achieved (91.7% of 350 minimum)
+            planA: 241, // Updated proportion based on 75% Plan A ratio (321 × 0.75)
+            planB: 80, // Updated proportion based on 25% Plan B ratio (321 × 0.25)
             depositPerEnrollment: 2000,
             avgRevenueBlended: 10300, // Mix of $10K (Plan A) and $11K (Plan B)
             currentAttendees: 1649 // Foundation that enabled strong Academy Day 3 performance
@@ -1176,7 +1176,7 @@
                     {time: '2/25 12:13 PM', count: 309},   // 🚀 HISTORIC STREAK CONTINUES! 3 above previous record!
                     {time: '2/25 3:14 PM', count: 310},    // 🚀 UNSTOPPABLE MOMENTUM! 4 above previous record!
                     {time: '2/25 4:45 PM', count: 312},    // 🎯 Strong progress - 312 enrollments (83.2% of 375 goal)
-                    {time: '2/26 Current', count: 318},    // 🎯 Current after refund - 318 enrollments (84.8% of 375 goal)
+                    {time: '2/26 4:35 PM', count: 321},    // 🎯 Latest enrollments - 321 enrollments (85.6% of 375 goal)
                 ];
                 
                 // Generate future hourly projections through 6 PM today
@@ -1310,7 +1310,7 @@
                                         if (total === 309) milestone = ' 📈 CONTINUED PROGRESS';
                                         if (total === 310) milestone = ' 🎯 82.7% OF 375 GOAL';
                                         if (total === 312) milestone = ' 🎯 83.2% OF 375 GOAL';
-                                        if (total === 318) milestone = ' 🎯 84.8% OF 375 GOAL';
+                                        if (total === 321) milestone = ' 🎯 85.6% OF 375 GOAL';
                                         if (total === 375) milestone = ' 🏆 GOAL ACHIEVED!';
                                         
                                         return [`Total Revenue: $${revenue.toLocaleString()}`, milestone];
@@ -1644,7 +1644,7 @@
         function updateRevenueChart() {
             if (window.revenueChart) {
                 const currentRevenue = (academyData.planA * 10000) + (academyData.planB * 11000);
-                window.revenueChart.data.datasets[0].data = [636651, 3180000]; // 318 ENROLLMENTS! $3.18M Academy booked revenue (84.8% of 375 goal)
+                window.revenueChart.data.datasets[0].data = [636651, 3210000]; // 321 ENROLLMENTS! $3.21M Academy booked revenue (85.6% of 375 goal)
                 window.revenueChart.update();
                 console.log(`💰 Updated revenue chart: Academy booked revenue = $${currentRevenue.toLocaleString()}`);
             }
@@ -1733,7 +1733,7 @@
                 285,  // 7:46 AM - 2nd post-event sale  
                 286,  // 11:23 AM - 3rd post-event sale
                 287,  // 12:02 PM - 4th post-event sale
-                318   // 🎯 84.8% OF GOAL - 35th post-event sale - Strong progress toward 375
+                321   // 🎯 85.6% OF GOAL - 38th post-event sale - Strong progress toward 375
             ];
             
             // Readable timeline labels (starting 3 PM Day 2 - when Academy action begins)
