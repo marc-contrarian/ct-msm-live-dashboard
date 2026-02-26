@@ -26,8 +26,8 @@ const mimeTypes = {
 // API Routes
 app.get('/api/live-data', (req, res) => {
   // Get current Academy count from file or default to baseline
-  let currentEnrollments = 315; // Current record count
-  let currentRevenue = 3225000; // $3.193M
+  let currentEnrollments = 317; // Current record count
+  let currentRevenue = 3170000; // $3.17M
   
   try {
     if (fs.existsSync('current_academy_count.txt')) {
@@ -36,28 +36,8 @@ app.get('/api/live-data', (req, res) => {
       if (!isNaN(count) && count > 123) {
         currentEnrollments = count;
         
-        // Calculate revenue based on actual count
-        if (count === 315) {
-          currentRevenue = 3225000; // $3.225M for 315 enrollments (84.0% of goal)
-        } else if (count === 314) {
-          currentRevenue = 3209000; // $3.209M for 314 enrollments
-        } else if (count === 313) {
-          currentRevenue = 3193000; // $3.193M for 313 enrollments (83.5% of goal)
-        } else if (count === 312) {
-          currentRevenue = 3188000; // $3.188M for 312 enrollments
-        } else if (count === 310) {
-          currentRevenue = 3178000; // $3.178M for unstoppable momentum
-        } else if (count === 309) {
-          currentRevenue = 3173000; // $3.173M for historic streak
-        } else if (count === 308) {
-          currentRevenue = 3168000; // $3.168M for record-extending
-        } else if (count === 307) {
-          currentRevenue = 3163000; // $3.163M for record-breaking
-        } else if (count === 306) {
-          currentRevenue = 3150000; // $3.15M for record-matching
-        } else {
-          currentRevenue = count * 10285; // More accurate average
-        }
+        // Calculate revenue based on actual count (simplified dynamic calculation)
+        currentRevenue = count * 10000; // $10K per enrollment
       }
     }
   } catch (error) {
@@ -96,14 +76,14 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    enrollments: 313,
-    message: 'MSM Live Dashboard - 313 Enrollments (83.5% of 375 Goal)' 
+    enrollments: 317,
+    message: 'MSM Live Dashboard - 317 Enrollments (84.5% of 375 Goal)' 
   });
 });
 
 app.listen(PORT, () => {
   console.log(`🚀 MSM Live Dashboard server running on port ${PORT}`);
-  console.log(`📊 313 Academy enrollments - 83.5% of 375 goal achieved!`);
+  console.log(`📊 317 Academy enrollments - 84.5% of 375 goal achieved!`);
 });
 
 module.exports = app;
