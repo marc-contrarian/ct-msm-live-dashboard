@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MSM Failed Charges Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>MSM Failed Charges Test</h1>
+    <div id="result">Testing...</div>
+
+    <script>
+        const supabase = window.supabase.createClient(
+            'https://hwfhcznrpqdldlcqcvro.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3Zmhjem5ycHFkbGRsY3FjdnJvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjE0MDYzNCwiZXhwIjoyMDg3NzE2NjM0fQ.FsXw5uCOc1s7MKYj9je4GBZPJLgx0u3OMgGbd_1iRB4'
+        );
+
+        async function test() {
+            try {
+                const { data, error } = await supabase
+                    .from('failed_charges')
+                    .select('*')
+                    .eq('resolved', false)
+                    .limit(3);
+
+                if (error) throw error;
+
+                document.getElementById('result').innerHTML = 
+                    '<h2>✅ SUCCESS! Found ' + data.length + ' failed charges:</h2>' +
+                    '<ul>' + 
+                    data.map(charge => `<li>${charge.customer_name} - $${charge.failed_amount}</li>`).join('') +
+                    '</ul>';
+                    
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    '<h2>❌ ERROR:</h2><pre>' + error.message + '</pre>';
+            }
+        }
+
+        test();
+    </script>
+</body>
+</html>
