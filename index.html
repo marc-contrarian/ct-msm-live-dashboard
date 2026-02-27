@@ -19,6 +19,53 @@
             padding: 20px;
         }
 
+        .password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .password-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .password-box h2 {
+            margin-bottom: 20px;
+            color: #52130C;
+        }
+
+        .password-box input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .password-box button {
+            width: 100%;
+            padding: 15px;
+            background: #52130C;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
         .dashboard-container {
             max-width: 1400px;
             margin: 0 auto;
@@ -229,7 +276,17 @@
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
+    <!-- Password Protection -->
+    <div id="password-screen" class="password-screen">
+        <div class="password-box">
+            <h2>🔐 MSM Dashboard Access</h2>
+            <p style="margin-bottom: 20px;">Enter password to continue</p>
+            <input type="password" id="password-input" placeholder="Password">
+            <button onclick="checkPassword()">Access Dashboard</button>
+        </div>
+    </div>
+
+    <div class="dashboard-container" style="display: none;" id="dashboard">
         <div class="dashboard-header">
             <h1>🚨 MSM Live - Failed Charges Dashboard</h1>
             <p>Payment Recovery & Customer Management System</p>
@@ -292,21 +349,80 @@
     </div>
 
     <script>
-        // Supabase configuration
+        // Password protection
+        function checkPassword() {
+            const password = document.getElementById('password-input').value;
+            if (password === 'msm') {
+                document.getElementById('password-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                initializeDashboard();
+            } else {
+                alert('Incorrect password');
+            }
+        }
+
+        // Allow enter key for password
+        document.getElementById('password-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // Supabase configuration - using service key for internal dashboard
         const supabaseUrl = 'https://hwfhcznrpqdldlcqcvro.supabase.co';
-        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3Zmhjem5ycHFkbGRsY3FjdnJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNDA2MzQsImV4cCI6MjA4NzcxNjYzNH0.6hNLKlQVSmShJuiOIKJWb29pBR9dTgUjn1FlAV9IZuU';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3Zmhjem5ycHFkbGRsY3FjdnJvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjE0MDYzNCwiZXhwIjoyMDg3NzE2NjM0fQ.FsXw5uCOc1s7MKYj9je4GBZPJLgx0u3OMgGbd_1iRB4';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         let failedChargesData = [];
         let filteredData = [];
         let currentFilter = 'all';
+
+        function initializeDashboard() {
+            loadFailedCharges();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Auto-refresh every 5 minutes
+            setInterval(loadFailedCharges, 5 * 60 * 1000);
+        }
+
+        function setupEventListeners() {
+            // Filter functionality
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const filter = btn.dataset.filter;
+                    currentFilter = filter;
+                    applyFilter(filter);
+                });
+            });
+
+            // Search functionality
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                if (searchTerm === '') {
+                    filteredData = failedChargesData;
+                } else {
+                    filteredData = failedChargesData.filter(charge => {
+                        const customerName = (charge.customer_name || '').toLowerCase();
+                        const customerEmail = (charge.customer_email || '').toLowerCase();
+                        
+                        return customerName.includes(searchTerm) || customerEmail.includes(searchTerm);
+                    });
+                }
+                renderTable();
+            });
+        }
 
         // Load failed charges data with simplified query
         async function loadFailedCharges() {
             try {
                 console.log('Loading failed charges...');
                 
-                // Simple query that matches our actual database structure
                 const { data: failedCharges, error } = await supabase
                     .from('failed_charges')
                     .select('*')
@@ -377,26 +493,14 @@
             const totalFailed = failedChargesData.length;
             const totalAmount = failedChargesData.reduce((sum, charge) => 
                 sum + parseFloat(charge.failed_amount || 0), 0);
-            const resolvedCount = 0; // Since we only load unresolved
-            const recoveryRate = 0; // Calculate from all charges when needed
+            const resolvedCount = 0;
+            const recoveryRate = 0;
 
             document.getElementById('total-failed').textContent = totalFailed;
             document.getElementById('total-amount').textContent = '$' + totalAmount.toLocaleString();
             document.getElementById('resolved-count').textContent = resolvedCount;
             document.getElementById('recovery-rate').textContent = '0%';
         }
-
-        // Filter functionality
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
-                const filter = btn.dataset.filter;
-                currentFilter = filter;
-                applyFilter(filter);
-            });
-        });
 
         function applyFilter(filter) {
             switch(filter) {
@@ -415,23 +519,6 @@
             renderTable();
         }
 
-        // Search functionality
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            
-            if (searchTerm === '') {
-                filteredData = failedChargesData;
-            } else {
-                filteredData = failedChargesData.filter(charge => {
-                    const customerName = (charge.customer_name || '').toLowerCase();
-                    const customerEmail = (charge.customer_email || '').toLowerCase();
-                    
-                    return customerName.includes(searchTerm) || customerEmail.includes(searchTerm);
-                });
-            }
-            renderTable();
-        });
-
         // Update status for a charge
         async function updateStatus(chargeId, statusText) {
             try {
@@ -445,7 +532,7 @@
 
                 if (error) throw error;
                 
-                loadFailedCharges(); // Refresh data
+                loadFailedCharges();
                 
             } catch (error) {
                 console.error('Error updating status:', error);
@@ -467,18 +554,12 @@
                     
                     if (error) throw error;
                     
-                    loadFailedCharges(); // Refresh data
+                    loadFailedCharges();
                 } catch (error) {
                     alert('Error resolving charge: ' + error.message);
                 }
             }
         }
-
-        // Initialize dashboard
-        loadFailedCharges();
-        
-        // Auto-refresh every 5 minutes
-        setInterval(loadFailedCharges, 5 * 60 * 1000);
     </script>
 </body>
 </html>
