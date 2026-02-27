@@ -1,386 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSM Live - Failed Charges Dashboard</title>
+    <title>MSM Failed Charges Dashboard - FIXED</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .password-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .password-box {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-        .password-box h2 {
-            margin-bottom: 20px;
-            color: #52130C;
-        }
-        .password-box input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        .password-box button {
-            width: 100%;
-            padding: 15px;
-            background: #52130C;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .dashboard-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        .dashboard-header {
-            background: linear-gradient(135deg, #52130C 0%, #713718 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        .dashboard-header h1 {
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        .stats-bar {
-            background: #f8f9fa;
-            padding: 20px 30px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .stat-item {
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #52130C;
-            display: block;
-        }
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .dashboard-controls {
-            padding: 20px 30px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .search-box {
-            flex: 1;
-            max-width: 300px;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-        }
-        .refresh-btn {
-            padding: 10px 20px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        .table-container {
-            overflow-x: auto;
-        }
-        .failed-charges-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .failed-charges-table th,
-        .failed-charges-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
-        .failed-charges-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #495057;
-            position: sticky;
-            top: 0;
-        }
-        .failed-charges-table tr:hover {
-            background: #f8f9fa;
-        }
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: 500;
-        }
-        .status-contacted {
-            background: #d1ecf1;
-            color: #0c5460;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: 500;
-        }
-        .status-resolved {
-            background: #d4edda;
-            color: #155724;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: 500;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        .btn-small {
-            padding: 5px 10px;
-            font-size: 0.8em;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
+        body { font-family: Arial, sans-serif; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #52130C 0%, #713718 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; font-weight: 700; }
+        .stats { background: #f8f9fa; padding: 20px; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; border-bottom: 1px solid #dee2e6; }
+        .stat { text-align: center; }
+        .stat-number { font-size: 2em; font-weight: bold; color: #52130C; display: block; }
+        .stat-label { color: #6c757d; font-size: 0.9em; margin-top: 5px; }
+        .controls { padding: 20px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .search { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; width: 300px; }
+        .refresh-btn { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        th { background: #f8f9fa; font-weight: 600; color: #495057; }
+        tr:hover { background: #f8f9fa; }
+        .amount { font-size: 1.1em; font-weight: bold; color: #dc3545; }
+        .status { background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: 500; }
+        .status-contacted { background: #d1ecf1; color: #0c5460; }
+        .btn { padding: 5px 10px; font-size: 0.8em; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; margin: 2px; }
         .btn-email { background: #007bff; color: white; }
         .btn-call { background: #28a745; color: white; }
         .btn-resolve { background: #dc3545; color: white; }
-        .loading {
-            text-align: center;
-            color: #6c757d;
-            padding: 40px;
-        }
-        .error {
-            text-align: center;
-            color: #dc3545;
-            padding: 20px;
-            background: #f8d7da;
-            margin: 20px;
-            border-radius: 6px;
-        }
-        .success {
-            text-align: center;
-            color: #155724;
-            padding: 10px 20px;
-            background: #d4edda;
-            margin: 10px 20px;
-            border-radius: 6px;
-        }
+        .loading { text-align: center; color: #6c757d; padding: 40px; }
+        .error { text-align: center; color: #dc3545; padding: 20px; background: #f8d7da; margin: 20px; border-radius: 6px; }
+        .debug { background: #e9ecef; padding: 15px; margin: 20px; border-radius: 6px; font-family: monospace; font-size: 0.9em; max-height: 200px; overflow-y: auto; }
     </style>
 </head>
 <body>
-    <!-- Password Protection -->
-    <div id="password-screen" class="password-screen">
-        <div class="password-box">
-            <h2>🔐 MSM Dashboard Access</h2>
-            <p style="margin-bottom: 20px;">Enter password to continue</p>
-            <input type="password" id="password-input" placeholder="Password">
-            <button onclick="checkPassword()">Access Dashboard</button>
-        </div>
-    </div>
-
-    <div class="dashboard-container" style="display: none;" id="dashboard">
-        <div class="dashboard-header">
-            <h1>🚨 MSM Live - Failed Charges Dashboard</h1>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 MSM Failed Charges Dashboard</h1>
             <p>Payment Recovery & Customer Management System</p>
         </div>
+        
+        <div id="debugInfo" class="debug">
+            <strong>🔧 Debug Log:</strong><br>
+            Initializing...
+        </div>
 
-        <div class="stats-bar">
-            <div class="stat-item">
-                <span id="total-failed" class="stat-number">-</span>
+        <div class="stats">
+            <div class="stat">
+                <span id="totalFailed" class="stat-number">-</span>
                 <div class="stat-label">Failed Charges</div>
             </div>
-            <div class="stat-item">
-                <span id="total-amount" class="stat-number">-</span>
+            <div class="stat">
+                <span id="totalAmount" class="stat-number">-</span>
                 <div class="stat-label">Amount At Risk</div>
             </div>
-            <div class="stat-item">
-                <span id="resolved-count" class="stat-number">-</span>
+            <div class="stat">
+                <span id="resolvedCount" class="stat-number">-</span>
                 <div class="stat-label">Resolved</div>
             </div>
-            <div class="stat-item">
-                <span id="recovery-rate" class="stat-number">-</span>
+            <div class="stat">
+                <span id="recoveryRate" class="stat-number">-</span>
                 <div class="stat-label">Recovery Rate</div>
             </div>
         </div>
 
-        <div class="dashboard-controls">
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Search by name or email...">
-            </div>
-            <button class="refresh-btn" onclick="loadFailedCharges()">🔄 Refresh</button>
+        <div class="controls">
+            <input type="text" id="searchInput" class="search" placeholder="Search by name or email...">
+            <button id="refreshBtn" class="refresh-btn">🔄 Refresh</button>
         </div>
 
-        <div class="table-container">
-            <table class="failed-charges-table">
-                <thead>
-                    <tr>
-                        <th>Customer</th>
-                        <th>Failed Date</th>
-                        <th>Failed Amount</th>
-                        <th>Paid to Date</th>
-                        <th>Remaining</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="charges-table-body">
-                    <tr>
-                        <td colspan="7" class="loading">Loading failed charges...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Failed Date</th>
+                    <th>Failed Amount</th>
+                    <th>Paid to Date</th>
+                    <th>Remaining</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="chargesTableBody">
+                <tr>
+                    <td colspan="7" class="loading">Loading failed charges...</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <script>
-        // Password protection
-        function checkPassword() {
-            const password = document.getElementById('password-input').value;
-            if (password === 'msm') {
-                document.getElementById('password-screen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                initializeDashboard();
-            } else {
-                alert('Incorrect password');
-            }
+        // Global variables - declared once to avoid syntax errors
+        let dbClient = null;
+        let chargesData = [];
+
+        // Debug logging function
+        function addDebugLog(message) {
+            console.log('[MSM Dashboard]', message);
+            const debugDiv = document.getElementById('debugInfo');
+            debugDiv.innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ' + message;
+            debugDiv.scrollTop = debugDiv.scrollHeight;
         }
 
-        document.getElementById('password-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
+        // Initialize the dashboard
+        function initDashboard() {
+            addDebugLog('🚀 Starting MSM Dashboard initialization...');
 
-        // ✅ WORKING Supabase configuration - CORRECT SERVICE KEY
-        const supabaseUrl = 'https://hwfhcznrpqdldlcqcvro.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3Zmhjem5ycHFkbGRsY3FjdnJvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjE0MDYzNCwiZXhwIjoyMDg3NzE2NjM0fQ.FsXw5uCOc1s7MKYj9je4GBZPJLgx0u3OMgGbd_1iRB4';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        let failedChargesData = [];
-        let filteredData = [];
-
-        function initializeDashboard() {
-            console.log('🚀 Initializing MSM Failed Charges Dashboard...');
-            loadFailedCharges();
-            setupEventListeners();
-            setInterval(loadFailedCharges, 5 * 60 * 1000);
-        }
-
-        function setupEventListeners() {
-            // Search functionality
-            document.getElementById('search-input').addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                
-                if (searchTerm === '') {
-                    filteredData = failedChargesData;
-                } else {
-                    filteredData = failedChargesData.filter(charge => {
-                        const customerName = (charge.customer_name || '').toLowerCase();
-                        const customerEmail = (charge.customer_email || '').toLowerCase();
-                        
-                        return customerName.includes(searchTerm) || customerEmail.includes(searchTerm);
-                    });
-                }
-                renderTable();
-            });
-        }
-
-        async function loadFailedCharges() {
             try {
-                console.log('🔍 Loading failed charges from database...');
-                
-                const { data: failedCharges, error } = await supabase
+                // Check if Supabase library is loaded
+                if (typeof window.supabase === 'undefined') {
+                    throw new Error('Supabase library not loaded');
+                }
+                addDebugLog('✅ Supabase library loaded successfully');
+
+                // Create Supabase client (only once)
+                dbClient = window.supabase.createClient(
+                    'https://hwfhcznrpqdldlcqcvro.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3Zmhjem5ycHFkbGRsY3FjdnJvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjE0MDYzNCwiZXhwIjoyMDg3NzE2NjM0fQ.FsXw5uCOc1s7MKYj9je4GBZPJLgx0u3OMgGbd_1iRB4'
+                );
+                addDebugLog('✅ Supabase client created successfully');
+
+                // Load data
+                loadCharges();
+
+                // Set up event listeners
+                setupEventListeners();
+
+                addDebugLog('✅ Dashboard initialization complete');
+
+            } catch (error) {
+                addDebugLog('❌ Initialization error: ' + error.message);
+                showError('Failed to initialize dashboard: ' + error.message);
+            }
+        }
+
+        // Load failed charges from database
+        async function loadCharges() {
+            try {
+                addDebugLog('🔍 Querying database for failed charges...');
+
+                const { data, error } = await dbClient
                     .from('failed_charges')
                     .select('*')
                     .eq('resolved', false)
                     .order('failure_date', { ascending: false });
 
+                addDebugLog('📊 Database query completed');
+
                 if (error) {
-                    console.error('❌ Supabase error:', error);
                     throw error;
                 }
 
-                console.log('✅ Successfully loaded charges:', failedCharges);
-
-                failedChargesData = failedCharges || [];
-                filteredData = failedChargesData;
-                
-                renderTable();
-                updateStats();
-                
-                if (failedChargesData.length > 0) {
-                    document.getElementById('charges-table-body').innerHTML += 
-                        '<tr><td colspan="7" class="success">✅ Successfully loaded ' + failedChargesData.length + ' failed charges!</td></tr>';
-                    setTimeout(() => {
-                        document.querySelector('.success').remove();
-                    }, 3000);
+                if (!data) {
+                    addDebugLog('⚠️ No data returned from database');
+                    chargesData = [];
+                } else {
+                    addDebugLog('✅ Successfully loaded ' + data.length + ' failed charges');
+                    chargesData = data;
                 }
-                
+
+                // Update UI
+                updateTable();
+                updateStats();
+
             } catch (error) {
-                console.error('💥 Error loading failed charges:', error);
-                document.getElementById('charges-table-body').innerHTML = 
-                    '<tr><td colspan="7" class="error">❌ Error loading data: ' + error.message + '<br><br>Database URL: ' + supabaseUrl + '</td></tr>';
+                addDebugLog('❌ Database query error: ' + error.message);
+                showError('Database error: ' + error.message);
             }
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('charges-table-body');
+        // Update the table with current data
+        function updateTable() {
+            const tbody = document.getElementById('chargesTableBody');
             
-            if (filteredData.length === 0) {
+            if (chargesData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="loading">No failed charges found.</td></tr>';
                 return;
             }
 
-            tbody.innerHTML = filteredData.map(charge => {
+            tbody.innerHTML = chargesData.map(charge => {
                 const failureDate = new Date(charge.failure_date).toLocaleDateString();
                 const customerName = charge.customer_name || 'Unknown Customer';
                 const customerEmail = charge.customer_email || '';
@@ -388,45 +184,70 @@
                 const totalPaid = parseFloat(charge.total_paid || 0);
                 const remainingBalance = parseFloat(charge.remaining_balance || 0);
                 const status = charge.recovery_status || 'pending';
+                const reason = charge.failure_reason || 'Payment failed';
                 
                 return `
                     <tr>
                         <td>
-                            <strong>${customerName}</strong><br>
+                            <strong style="color: #52130C;">${customerName}</strong><br>
                             <small style="color: #6c757d;">${customerEmail}</small><br>
-                            <small style="color: #dc3545;">${charge.failure_reason || 'Payment failed'}</small>
+                            <small style="color: #dc3545;">${reason}</small>
                         </td>
                         <td>${failureDate}</td>
-                        <td><strong style="color: #dc3545; font-size: 1.1em;">$${failedAmount.toLocaleString()}</strong></td>
+                        <td class="amount">$${failedAmount.toLocaleString()}</td>
                         <td>$${totalPaid.toLocaleString()}</td>
                         <td>$${remainingBalance.toLocaleString()}</td>
-                        <td><span class="status-${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
-                        <td class="action-buttons">
-                            <a href="mailto:${customerEmail}?subject=Payment Recovery - ${customerName}&body=Hi ${customerName.split(' ')[0]}, we need to update your payment information..." class="btn-small btn-email">Email</a>
-                            <button class="btn-small btn-call" onclick="updateStatus(${charge.id}, 'contacted', '${customerName}')">Call</button>
-                            <button class="btn-small btn-resolve" onclick="resolveCharge(${charge.id}, '${customerName}')">Resolve</button>
+                        <td><span class="status status-${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
+                        <td>
+                            <a href="mailto:${customerEmail}?subject=Payment Recovery - ${customerName}" class="btn btn-email">Email</a>
+                            <button class="btn btn-call" onclick="updateChargeStatus(${charge.id}, 'contacted', '${customerName}')">Call</button>
+                            <button class="btn btn-resolve" onclick="resolveCharge(${charge.id}, '${customerName}')">Resolve</button>
                         </td>
                     </tr>
                 `;
             }).join('');
+
+            addDebugLog('✅ Table updated with ' + chargesData.length + ' charges');
         }
 
+        // Update statistics
         function updateStats() {
-            const totalFailed = failedChargesData.length;
-            const totalAmount = failedChargesData.reduce((sum, charge) => 
+            const totalFailed = chargesData.length;
+            const totalAmount = chargesData.reduce((sum, charge) => 
                 sum + parseFloat(charge.failed_amount || 0), 0);
 
-            document.getElementById('total-failed').textContent = totalFailed;
-            document.getElementById('total-amount').textContent = '$' + totalAmount.toLocaleString();
-            document.getElementById('resolved-count').textContent = '0';
-            document.getElementById('recovery-rate').textContent = '0%';
+            document.getElementById('totalFailed').textContent = totalFailed;
+            document.getElementById('totalAmount').textContent = '$' + totalAmount.toLocaleString();
+            document.getElementById('resolvedCount').textContent = '0';
+            document.getElementById('recoveryRate').textContent = '0%';
+
+            addDebugLog('📊 Stats updated - Total: ' + totalFailed + ', Amount: $' + totalAmount.toLocaleString());
         }
 
-        async function updateStatus(chargeId, status, customerName) {
+        // Set up event listeners
+        function setupEventListeners() {
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                addDebugLog('🔄 Manual refresh triggered');
+                loadCharges();
+            });
+
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                // Simple search implementation can be added here
+                addDebugLog('🔍 Search: ' + searchTerm);
+            });
+
+            addDebugLog('✅ Event listeners set up');
+        }
+
+        // Update charge status
+        async function updateChargeStatus(chargeId, status, customerName) {
             try {
-                console.log(`Updating ${customerName} to ${status}...`);
+                addDebugLog(`Updating ${customerName} (ID: ${chargeId}) to status: ${status}`);
                 
-                const { error } = await supabase
+                const { error } = await dbClient
                     .from('failed_charges')
                     .update({ 
                         recovery_status: status,
@@ -437,20 +258,21 @@
                 if (error) throw error;
                 
                 alert(`✅ ${customerName} status updated to ${status}!`);
-                loadFailedCharges();
+                loadCharges(); // Reload data
                 
             } catch (error) {
-                console.error('Error updating status:', error);
+                addDebugLog(`❌ Error updating ${customerName}: ${error.message}`);
                 alert('❌ Error updating status: ' + error.message);
             }
         }
 
+        // Resolve charge
         async function resolveCharge(chargeId, customerName) {
             if (confirm(`Mark ${customerName}'s charge as resolved?`)) {
                 try {
-                    console.log(`Resolving ${customerName}...`);
+                    addDebugLog(`Resolving charge for ${customerName} (ID: ${chargeId})`);
                     
-                    const { error } = await supabase
+                    const { error } = await dbClient
                         .from('failed_charges')
                         .update({ 
                             resolved: true,
@@ -462,12 +284,32 @@
                     if (error) throw error;
                     
                     alert(`✅ ${customerName} charge resolved!`);
-                    loadFailedCharges();
+                    loadCharges(); // Reload data
                 } catch (error) {
-                    console.error('Error resolving charge:', error);
+                    addDebugLog(`❌ Error resolving ${customerName}: ${error.message}`);
                     alert('❌ Error resolving charge: ' + error.message);
                 }
             }
+        }
+
+        // Show error message
+        function showError(message) {
+            document.getElementById('chargesTableBody').innerHTML = 
+                '<tr><td colspan="7" class="error">❌ ' + message + '</td></tr>';
+        }
+
+        // Start the dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            addDebugLog('📄 DOM loaded, starting dashboard...');
+            initDashboard();
+        });
+
+        // Also start immediately in case DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+            addDebugLog('📄 Document still loading, waiting for DOMContentLoaded...');
+        } else {
+            addDebugLog('📄 Document ready, starting dashboard immediately...');
+            initDashboard();
         }
     </script>
 </body>
